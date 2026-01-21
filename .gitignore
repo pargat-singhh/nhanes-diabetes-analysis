@@ -1,0 +1,37 @@
+# -------------------------
+# R session & workspace
+# -------------------------
+.RData
+.RDataTmp
+.Rhistory
+
+# -------------------------
+# RStudio files
+# -------------------------
+.Rproj.user/
+
+# -------------------------
+# renv (DO NOT track libraries)
+# -------------------------
+renv/library/
+renv/python/
+renv/staging/
+
+# -------------------------
+# NHANES raw data
+# -------------------------
+*.XPT
+data/raw/
+
+# -------------------------
+# Temporary / cache files
+# -------------------------
+*_cache/
+*_files/
+
+# -------------------------
+# Operating system files
+# -------------------------
+.DS_Store
+Thumbs.db
+
