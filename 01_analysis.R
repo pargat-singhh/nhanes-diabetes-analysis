@@ -7,7 +7,6 @@
 ############################
 # 1. Load Required Packages
 ############################
-library(nhanesA)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -154,7 +153,8 @@ print(summary_table)
 ########################################
 # 9. Statistical Testing
 ########################################
-# Numerical variables (Wilcoxon Test)
+
+# --- Wilcoxon Tests (H1, H3, H4) ---
 num_vars <- c("Age", "BMI", "Fasting_Glucose",
               "HbA1c_level", "Sedentary_activity_mins", "Carb_intake")
 
@@ -163,33 +163,62 @@ stat_tests <- final_clean %>%
                names_to = "variable",
                values_to = "value") %>%
   group_by(variable) %>%
-  wilcox_test(value ~ diabetes) %>%
-  adjust_pvalue(method = "BH") %>%
-  add_significance("p.adj")
+  wilcox_test(value ~ diabetes)
 
 print(stat_tests)
 
-# Categorical variables (Chi-square test)
+# --- Chi-square Tests (H2, H5) ---
+cat("\n--- Chi-square: Gender x Diabetes ---\n")
 chisq.test(table(final_clean$Gender, final_clean$diabetes))
+
+cat("\n--- Chi-square: Smoking x Diabetes (H2) ---\n")
 chisq.test(table(final_clean$Current_Smoker, final_clean$diabetes))
+
+cat("\n--- Chi-square: Race x Diabetes (H5) ---\n")
 chisq.test(table(final_clean$Race, final_clean$diabetes))
 
+# --- Pairwise Chi-square for Race x Diabetes (H5 post-hoc) ---
+cat("\n--- Pairwise comparisons: Race x Diabetes (H5 post-hoc) ---\n")
+race_diabetes_table <- table(final_clean$Race, final_clean$diabetes)
+pairwise_prop_test(race_diabetes_table, p.adjust.method = "BH") %>%
+  print(n = Inf)
+
 
 ########################################
-# 10. Racial Disparity Analysis
+# 10. Racial Disparity Analysis (H6)
 ########################################
+
+# --- Kruskal-Wallis Tests ---
+cat("\n--- Kruskal-Wallis: HbA1c ~ Race ---\n")
 kruskal.test(HbA1c_level ~ Race, data = final_clean)
+
+cat("\n--- Kruskal-Wallis: Fasting Glucose ~ Race ---\n")
 kruskal.test(Fasting_Glucose ~ Race, data = final_clean)
+
+cat("\n--- Kruskal-Wallis: BMI ~ Race ---\n")
 kruskal.test(BMI ~ Race, data = final_clean)
 
-# Post-hoc test
-final_clean %>%
-  dunn_test(HbA1c_level ~ Race, p.adjust.method = "BH")
+
 
 
 ########################################
-# 11. Visualizations
+# 11. Logistic Regression (RQ7)
 ########################################
+cat("\n--- Logistic Regression: Predictors of Diabetes ---\n")
+logit_model <- glm(
+  diabetes_num ~ Age + Gender + Race + BMI +
+    Sedentary_activity_mins + Current_Smoker + Carb_intake,
+  data = final_clean,
+  family = binomial
+)
+
+summary(logit_model)
+
+
+########################################
+# 12. Visualizations
+########################################
+
 # Metabolic Indicators by Diabetes Status
 p1 <- ggboxplot(final_clean, x="diabetes", y="BMI", color="diabetes", add="jitter")
 p2 <- ggboxplot(final_clean, x="diabetes", y="Fasting_Glucose", color="diabetes", add="jitter")
@@ -226,4 +255,3 @@ p_race <- ggboxplot(final_clean, x="Race", y="HbA1c_level",
 ggsave("HbA1cDistribution.png",
        p_race,
        width = 7, height = 5, dpi = 300)
-
