@@ -23,8 +23,3 @@ Age, Gender, Race/Ethnicity, BMI, Fasting Plasma Glucose, HbA1c, Sedentary Behav
 | `output/` | Generated figures |
 | `renv.lock` | Package version lock for reproducibility |
 
-## Reproducibility
-
-```r
-renv::restore()
-```
