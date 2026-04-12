@@ -1,40 +1,30 @@
-# NHANES Diabetes & Lifestyle Analysis (2021–2023)
+# Examining Lifestyle Factors and Metabolic Health Markers Associated with Diabetes Using NHANES Data (2021–2023)
 
-This project analyzes the association between lifestyle factors and
-diabetes status using data from the National Health and Nutrition
-Examination Survey (NHANES) 2021–2023.
+Data sourced from [NHANES 2021–2023](https://wwwn.cdc.gov/nchs/nhanes/) public-use datasets provided by the [CDC](https://www.cdc.gov/).
 
-## Data Source
-NHANES public-use datasets provided by the CDC:
-https://wwwn.cdc.gov/nchs/nhanes/
+## Variables
 
-## Files Included
-- `analysis.R` – Main data cleaning, analysis, and visualization script
-- `report/` – Final project report (PDF)
-- `output/` – Generated figures and plots
-- `renv.lock` – Package version lock file for reproducibility
-
-## Variables Studied
-- Age
-- Gender
-- Race/Ethnicity
-- BMI
-- Fasting Plasma Glucose
-- HbA1c
-- Sedentary Behavior
-- Smoking Status
-- Carbohydrate Intake
+Age, Gender, Race/Ethnicity, BMI, Fasting Plasma Glucose, HbA1c, Sedentary Behavior, Smoking Status, Carbohydrate Intake
 
 ## Methods
-- Data merging and cleaning using `dplyr`
-- Wilcoxon rank-sum tests for numeric variables
-- Chi-square tests for categorical variables
-- Kruskal-Wallis and Dunn’s post-hoc tests
-- Visualization using `ggplot2`
+
+- Wilcoxon rank-sum tests (numeric variables by diabetes status)
+- Chi-square tests (Gender, Smoking, Race × Diabetes)
+- Pairwise proportion tests with BH correction (Race post-hoc)
+- Kruskal-Wallis tests (HbA1c, Glucose, BMI across Race)
+- Logistic regression (predictors of diabetes)
+- Correlation heatmap and boxplot visualizations
+
+## Files
+
+| File | Description |
+|------|-------------|
+| `analysis.R` | Data cleaning, statistical analysis, and visualization |
+| `output/` | Generated figures |
+| `renv.lock` | Package version lock for reproducibility |
 
 ## Reproducibility
-This project uses `renv` to manage package versions.
-To reproduce the environment:
 
 ```r
 renv::restore()
+```
