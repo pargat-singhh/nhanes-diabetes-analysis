@@ -134,6 +134,51 @@ str(final_clean)
 ########################################
 # 8. Descriptive Statistics (EDA)
 ########################################
+# i. Overall diabetes prevalence
+cat("=== Overall Diabetes Prevalence ===\n")
+table(final_clean$diabetes)
+round(prop.table(table(final_clean$diabetes)) * 100, 1)
+
+# ii. Prevalence by Gender
+cat("\n=== Prevalence by Gender ===\n")
+gender_prev <- final_clean %>%
+  group_by(Gender) %>%
+  summarise(
+    n = n(),
+    diabetic = sum(diabetes == "Diabetes"),
+    prevalence = round(mean(diabetes == "Diabetes") * 100, 1),
+    .groups = "drop"
+  )
+print(gender_prev)
+
+# iii. Prevalence by Race/Ethnicity
+cat("\n=== Prevalence by Race/Ethnicity ===\n")
+race_prev <- final_clean %>%
+  group_by(Race) %>%
+  summarise(
+    n = n(),
+    diabetic = sum(diabetes == "Diabetes"),
+    prevalence = round(mean(diabetes == "Diabetes") * 100, 1),
+    .groups = "drop"
+  )
+print(race_prev)
+
+# iv. Prevalence by Age Group
+cat("\n=== Prevalence by Age Group ===\n")
+age_prev <- final_clean %>%
+  mutate(Age_Group = cut(Age, breaks = c(0, 40, 60, Inf),
+                         labels = c("18-40", "41-60", "60+"))) %>%
+  group_by(Age_Group) %>%
+  summarise(
+    n = n(),
+    diabetic = sum(diabetes == "Diabetes"),
+    prevalence = round(mean(diabetes == "Diabetes") * 100, 1),
+    .groups = "drop"
+  )
+print(age_prev)
+
+# v. Descriptive stats (mean ± SD) by diabetes status
+cat("\n=== Descriptive Statistics by Diabetes Status ===\n")
 summary_table <- final_clean %>%
   group_by(diabetes) %>%
   summarise(
@@ -146,7 +191,6 @@ summary_table <- final_clean %>%
     ),
     .groups = "drop"
   )
-
 print(summary_table)
 
 
@@ -166,6 +210,7 @@ stat_tests <- final_clean %>%
   wilcox_test(value ~ diabetes)
 
 print(stat_tests)
+View(stat_tests)
 
 # --- Chi-square Tests (H2, H5) ---
 cat("\n--- Chi-square: Gender x Diabetes ---\n")
